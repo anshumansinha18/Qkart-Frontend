@@ -5,6 +5,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 .footer-text {
@@ -13,6 +14,24 @@
     text-align: center;
     font-weight: 300;
     width: 100%;
+}
+
+.alert{
+   padding: 5px 15px;
+   position: absolute;
+   bottom: 5px
+}
+
+.alert-success{
+    background-color: #d4edda;
+}
+
+.alert-danger{
+    background-color: #f8d7da;
+}
+
+.alert-warning{
+    background-color: #fff3cd;
 }
 
 @media screen and (min-width: 768px) {

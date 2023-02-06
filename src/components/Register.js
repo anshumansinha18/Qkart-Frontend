@@ -11,7 +11,6 @@ import "./Register.css";
 const Register = () => {
   const { enqueueSnackbar } = useSnackbar();
 
-
   // TODO: CRIO_TASK_MODULE_REGISTER - Implement the register function
   /**
    * Definition for register handler
@@ -35,7 +34,65 @@ const Register = () => {
    *      "message": "Username is already taken"
    * }
    */
+
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [alert, setAlert] = useState({
+    type: "",
+    msg: "",
+  });
+
+  let handleChange = (e) => {
+    let [key, value] = [e.target.name, e.target.value];
+    setFormData({
+      ...formData,
+      [key]: value,
+    });
+  };
+
   const register = async (formData) => {
+    console.log(formData);
+
+    const valid = validateInput(formData);
+    if (valid) {
+      // setFormStatus("submitting");
+      try {
+        let res = await axios.post(`${config.endpoint}/auth/register`, {
+          username: formData.username,
+          password: formData.password,
+        });
+        console.log(res);
+        setAlert({
+          type: "success",
+          msg: "Registered Successfully",
+        });
+      } catch (e) {
+        console.log(e.response.data);
+        if (e.response) {
+          setAlert({
+            type: "danger",
+            msg: e.response.data.message,
+          });
+        } else {
+          setAlert({
+            type: "danger",
+            msg: "Something went wrong. Check that the backend is running, reachable and returns valid JSON",
+          });
+        }
+      }
+      
+    }
+    // setFormStatus("unsubmitted");
+    setTimeout(() => {
+      setAlert({
+        type: "",
+        msg: "",
+      });
+    }, 4000);
   };
 
   // TODO: CRIO_TASK_MODULE_REGISTER - Implement user input validation logic
@@ -57,6 +114,30 @@ const Register = () => {
    * -    Check that confirmPassword field has the same value as password field - Passwords do not match
    */
   const validateInput = (data) => {
+    let type = "warning";
+    let msg = "";
+
+    if (!data.username) {
+      msg = "Username is a required field";
+    } else if (data.username.length < 6) {
+      msg = "Username must be at least 6 characters";
+    } else if (!data.password) msg = "Password is a required field";
+    else if (data.password.length < 6) {
+      msg = "Password must be at least 6 characters";
+    } else if (data.password !== data.confirmPassword)
+      msg = "Passwords do not match";
+
+      setAlert({
+        type: type,
+        msg: msg,
+      });
+     
+    console.log(msg);
+    if (msg) return false;
+    else {
+
+      return true;
+    }
   };
 
   return (
@@ -76,8 +157,10 @@ const Register = () => {
             variant="outlined"
             title="Username"
             name="username"
+            value={formData.username}
             placeholder="Enter Username"
             fullWidth
+            onChange={handleChange}
           />
           <TextField
             id="password"
@@ -85,6 +168,8 @@ const Register = () => {
             label="Password"
             name="password"
             type="password"
+            value={formData.password}
+            onChange={handleChange}
             helperText="Password must be atleast 6 characters length"
             fullWidth
             placeholder="Enter a password with minimum 6 characters"
@@ -94,21 +179,27 @@ const Register = () => {
             variant="outlined"
             label="Confirm Password"
             name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
             type="password"
             fullWidth
           />
-           <Button className="button" variant="contained">
+          <Button
+            className="button"
+            variant="contained"
+            onClick={() => register(formData)}
+          >
             Register Now
-           </Button>
+          </Button>
           <p className="secondary-action">
             Already have an account?{" "}
-             <a className="link" href="#">
+            <a className="link" href="/">
               Login here
-             </a>
+            </a>
           </p>
         </Stack>
       </Box>
-      <Footer />
+      <Footer alert={alert} />
     </Box>
   );
 };
