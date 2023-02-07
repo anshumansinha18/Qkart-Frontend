@@ -2,7 +2,7 @@ import { Button, CircularProgress, Stack, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import axios from "axios";
 import { useSnackbar } from "notistack";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { config } from "../App";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -45,7 +45,8 @@ const Register = () => {
     type: "",
     msg: "",
   });
-
+   
+  const [formStatus, setFormStatus] = useState("unsubmitted");
   let handleChange = (e) => {
     let [key, value] = [e.target.name, e.target.value];
     setFormData({
@@ -59,7 +60,7 @@ const Register = () => {
 
     const valid = validateInput(formData);
     if (valid) {
-      // setFormStatus("submitting");
+      setFormStatus("submitted");
       try {
         let res = await axios.post(`${config.endpoint}/auth/register`, {
           username: formData.username,
@@ -70,7 +71,9 @@ const Register = () => {
           type: "success",
           msg: "Registered Successfully",
         });
+        setFormStatus("unsubmitted");
       } catch (e) {
+        setFormStatus("submitted");
         console.log(e.response.data);
         if (e.response) {
           setAlert({
@@ -83,17 +86,23 @@ const Register = () => {
             msg: "Something went wrong. Check that the backend is running, reachable and returns valid JSON",
           });
         }
+        setFormStatus("unsubmitted");
       }
       
     }
-    // setFormStatus("unsubmitted");
+    
+  };
+
+  useEffect(()=>{
+    if(alert.type && alert.msg){
     setTimeout(() => {
       setAlert({
         type: "",
         msg: "",
       });
-    }, 4000);
-  };
+    }, 5000);
+  }
+  }, [alert])
 
   // TODO: CRIO_TASK_MODULE_REGISTER - Implement user input validation logic
   /**
@@ -127,15 +136,17 @@ const Register = () => {
     } else if (data.password !== data.confirmPassword)
       msg = "Passwords do not match";
 
+     
+     
+    console.log(msg);
+    if (msg){
       setAlert({
         type: type,
         msg: msg,
       });
-     
-    console.log(msg);
-    if (msg) return false;
+       return false;
+    }
     else {
-
       return true;
     }
   };
@@ -184,13 +195,13 @@ const Register = () => {
             type="password"
             fullWidth
           />
-          <Button
+          {formStatus==="unsubmitted"?<Button
             className="button"
             variant="contained"
             onClick={() => register(formData)}
           >
             Register Now
-          </Button>
+          </Button>:<div className="spinner"><CircularProgress/></div>}
           <p className="secondary-action">
             Already have an account?{" "}
             <a className="link" href="/">
