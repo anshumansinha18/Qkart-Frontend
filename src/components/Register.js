@@ -7,11 +7,12 @@ import { config } from "../App";
 import Footer from "./Footer";
 import Header from "./Header";
 import "./Register.css";
+import { useHistory, Link } from "react-router-dom";
 
 const Register = () => {
+  const history = useHistory();
   const { enqueueSnackbar } = useSnackbar();
 
-  // TODO: CRIO_TASK_MODULE_REGISTER - Implement the register function
   /**
    * Definition for register handler
    * - Function to be called when the user clicks on the register button or submits the register form
@@ -41,10 +42,6 @@ const Register = () => {
     confirmPassword: "",
   });
 
-  const [alert, setAlert] = useState({
-    type: "",
-    msg: "",
-  });
    
   const [formStatus, setFormStatus] = useState("unsubmitted");
   let handleChange = (e) => {
@@ -67,24 +64,16 @@ const Register = () => {
           password: formData.password,
         });
         console.log(res);
-        setAlert({
-          type: "success",
-          msg: "Registered Successfully",
-        });
+        enqueueSnackbar("Registered Successfully", {variant:"success"});
+        history.push("/login", { from: "Register" })
         setFormStatus("unsubmitted");
       } catch (e) {
         setFormStatus("submitted");
         console.log(e.response.data);
         if (e.response) {
-          setAlert({
-            type: "danger",
-            msg: e.response.data.message,
-          });
+          enqueueSnackbar(e.response.data.message, {variant: "error"});
         } else {
-          setAlert({
-            type: "danger",
-            msg: "Something went wrong. Check that the backend is running, reachable and returns valid JSON",
-          });
+          enqueueSnackbar("Something went wrong. Check that the backend is running, reachable and returns valid JSON", {variant: "error"});
         }
         setFormStatus("unsubmitted");
       }
@@ -93,16 +82,6 @@ const Register = () => {
     
   };
 
-  useEffect(()=>{
-    if(alert.type && alert.msg){
-    setTimeout(() => {
-      setAlert({
-        type: "",
-        msg: "",
-      });
-    }, 5000);
-  }
-  }, [alert])
 
   // TODO: CRIO_TASK_MODULE_REGISTER - Implement user input validation logic
   /**
@@ -123,8 +102,7 @@ const Register = () => {
    * -    Check that confirmPassword field has the same value as password field - Passwords do not match
    */
   const validateInput = (data) => {
-    let type = "warning";
-    let msg = "";
+      let msg="";
 
     if (!data.username) {
       msg = "Username is a required field";
@@ -140,10 +118,7 @@ const Register = () => {
      
     console.log(msg);
     if (msg){
-      setAlert({
-        type: type,
-        msg: msg,
-      });
+      enqueueSnackbar(msg, {variant: "warning"});
        return false;
     }
     else {
@@ -204,13 +179,13 @@ const Register = () => {
           </Button>:<div className="spinner"><CircularProgress/></div>}
           <p className="secondary-action">
             Already have an account?{" "}
-            <a className="link" href="/">
+            <Link className="link" to="/login">
               Login here
-            </a>
+            </Link>
           </p>
         </Stack>
       </Box>
-      <Footer alert={alert} />
+      <Footer />
     </Box>
   );
 };

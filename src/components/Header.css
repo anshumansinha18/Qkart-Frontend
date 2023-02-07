@@ -16,6 +16,14 @@
     cursor: pointer;
 }
 
+.userName{
+    margin-left: 10px;
+}
+
+.avatar{
+    display: flex;
+    align-items: center;
+}
 .explore-button {
     color: #00a278 !important;
 }

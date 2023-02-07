@@ -12,9 +12,6 @@ const Footer = (props) => {
         QKart is your one stop solution to the buy the latest trending items
         with India's Fastest Delivery to your doorstep
       </p>
-      {props.alert.type && <div className={`alert alert-${props.alert.type}`} role="alert">
-        {props.alert.msg}
-      </div>}
     </Box>
   );
 };
