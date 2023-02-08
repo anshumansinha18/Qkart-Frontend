@@ -46,7 +46,7 @@ const Header = ({ children, hasHiddenAuthButtons }) => {
       ) : localStorage.getItem("username") ? (
         <>
           <Stack direction="row" spacing={2} justifyContent="flex-end">
-            <div class="avatar">
+            <div className="avatar">
               <img src="avatar.png" alt={localStorage.getItem("username")}></img>
               <span className="userName">{localStorage.getItem("username")}</span>
             </div>
