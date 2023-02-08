@@ -57,17 +57,17 @@ const Login = () => {
   };
 
   const login = async (formData) => {
-    console.log(formData);
+    
 
     const valid = validateInput(formData);
     if (valid) {
       setLoginStatus("submitted");
       try {
         let res = await axios.post(`${config.endpoint}/auth/login`, formData);
-        console.log(res);
+    
         enqueueSnackbar("Logged in successfully", { variant: "success" });
         persistLogin(res.data.token, res.data.username, res.data.balance);
-        history.push("/", { from: "Login" })
+        history.push("/")
         setLoginStatus("unsubmitted");
       } catch (e) {
         if (e.response) {
