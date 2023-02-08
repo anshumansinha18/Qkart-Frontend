@@ -33,6 +33,7 @@ const Header = ({ children, hasHiddenAuthButtons }) => {
       {/* <Stack direction="row" spacing={2} justifyContent="flex-end">
           {b}
         </Stack> */}
+        {children}
       {hasHiddenAuthButtons ? (
         <Button
           className="explore-button"

@@ -179,7 +179,7 @@ const Login = () => {
               LOGIN TO QKART
             </Button>
           ) : (
-            <div class="spinner">
+            <div className="spinner">
               <CircularProgress />
             </div>
           )}
